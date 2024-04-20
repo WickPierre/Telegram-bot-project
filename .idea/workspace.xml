@@ -4,10 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ec5cdb6b-b4bc-46a3-812e-ba88c8d19d33" name="Changes" comment="Changed bot token">
+    <list default="true" id="ec5cdb6b-b4bc-46a3-812e-ba88c8d19d33" name="Changes" comment="Hid and modified (again) bot token">
+      <change afterPath="$PROJECT_DIR$/help_commands.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/youtube-logo.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -118,7 +120,15 @@
       <option name="project" value="LOCAL" />
       <updated>1713459795854</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Hid and modified (again) bot token">
+      <option name="closed" value="true" />
+      <created>1713461809061</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1713461809061</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -126,6 +136,7 @@
     <MESSAGE value="Concept" />
     <MESSAGE value="Initialised server. Developments with YouTube API." />
     <MESSAGE value="Changed bot token" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changed bot token" />
+    <MESSAGE value="Hid and modified (again) bot token" />
+    <option name="LAST_COMMIT_MESSAGE" value="Hid and modified (again) bot token" />
   </component>
 </project>
