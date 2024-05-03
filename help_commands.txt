@@ -1,6 +1,0 @@
-I can help you find and download videos from YouTube.
-
-You can control me by sending these commands:
-
-/download - download video
-/findchannel - show information about channel

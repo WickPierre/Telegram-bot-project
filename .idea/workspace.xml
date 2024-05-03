@@ -4,12 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ec5cdb6b-b4bc-46a3-812e-ba88c8d19d33" name="Changes" comment="Hid and modified (again) bot token">
-      <change afterPath="$PROJECT_DIR$/help_commands.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/youtube-logo.jpg" afterDir="false" />
+    <list default="true" id="ec5cdb6b-b4bc-46a3-812e-ba88c8d19d33" name="Changes" comment="Added search_channel_handler.">
+      <change afterPath="$PROJECT_DIR$/help_commands_en.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/help_commands_ru.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/youtube_downloader_client.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/help_commands.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/youtube_tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/youtube_tests.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,20 +38,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.main.executor": "Run",
+    "Python.youtube_tests.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "/Users/petrlutkin/Desktop/Yandex_lyceum/Telegram_bot_project"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.youtube_tests">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="Telegram_bot_project" />
       <option name="ENV_FILES" value="" />
@@ -71,6 +79,33 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="youtube_tests" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="Telegram_bot_project" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.11 (Telegram_bot_project)" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/youtube_tests.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.main" />
+      <item itemvalue="Python.youtube_tests" />
+    </list>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -128,7 +163,15 @@
       <option name="project" value="LOCAL" />
       <updated>1713461809061</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Added googletrans library. Added handlers &quot;/start&quot;, &quot;/help&quot;, &quot;/findchannel&quot;.">
+      <option name="closed" value="true" />
+      <created>1713626959238</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1713626959238</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -137,6 +180,7 @@
     <MESSAGE value="Initialised server. Developments with YouTube API." />
     <MESSAGE value="Changed bot token" />
     <MESSAGE value="Hid and modified (again) bot token" />
-    <option name="LAST_COMMIT_MESSAGE" value="Hid and modified (again) bot token" />
+    <MESSAGE value="Added googletrans library. Added handlers &quot;/start&quot;, &quot;/help&quot;, &quot;/findchannel&quot;." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added googletrans library. Added handlers &quot;/start&quot;, &quot;/help&quot;, &quot;/findchannel&quot;." />
   </component>
 </project>

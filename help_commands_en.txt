@@ -1,0 +1,10 @@
+I can help you find and download video from YouTube.
+
+You can control me by sending these commands:
+
+/changelanguage - change language
+
+/downloadvideo - download video
+
+/findchannel - show information about the channel
+/findvideo - show information about the video
