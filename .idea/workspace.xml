@@ -4,15 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ec5cdb6b-b4bc-46a3-812e-ba88c8d19d33" name="Changes" comment="Added search_channel_handler.">
-      <change afterPath="$PROJECT_DIR$/help_commands_en.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/help_commands_ru.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/youtube_downloader_client.py" afterDir="false" />
+    <list default="true" id="ec5cdb6b-b4bc-46a3-812e-ba88c8d19d33" name="Changes" comment="Added search_video_handler and download_video_handler. Deleted googletrans libary and installed pytube library.">
+      <change afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/help_commands.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/youtube_tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/youtube_tests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/youtube_downloader_client.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Описание проекта.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Описание проекта.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +26,20 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;WickPierre&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="3899b3fb-f908-4ada-96f0-44c24a1aa44a" />
+        <option name="url" value="https://github.com/WickPierre/Telegram-bot-project.git" />
+      </UrlAndAccount>
+    </option>
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
 }</component>
@@ -38,16 +49,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.main.executor": "Run",
-    "Python.youtube_tests.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "/Users/petrlutkin/Desktop/Yandex_lyceum/Telegram_bot_project"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.youtube_tests.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/petrlutkin/Desktop/Yandex_lyceum/Telegram_bot_project&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -56,7 +67,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.youtube_tests">
+  <component name="RunManager" selected="Python.main">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="Telegram_bot_project" />
       <option name="ENV_FILES" value="" />
@@ -171,8 +182,27 @@
       <option name="project" value="LOCAL" />
       <updated>1713626959238</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Added search_video_handler and download_video_handler. Deleted googletrans libary and installed pytube library.">
+      <option name="closed" value="true" />
+      <created>1714772836685</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1714772836685</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="First commit" />
@@ -181,6 +211,7 @@
     <MESSAGE value="Changed bot token" />
     <MESSAGE value="Hid and modified (again) bot token" />
     <MESSAGE value="Added googletrans library. Added handlers &quot;/start&quot;, &quot;/help&quot;, &quot;/findchannel&quot;." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added googletrans library. Added handlers &quot;/start&quot;, &quot;/help&quot;, &quot;/findchannel&quot;." />
+    <MESSAGE value="Added search_video_handler and download_video_handler. Deleted googletrans libary and installed pytube library." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added search_video_handler and download_video_handler. Deleted googletrans libary and installed pytube library." />
   </component>
 </project>

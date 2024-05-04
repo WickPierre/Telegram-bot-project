@@ -1,27 +1,35 @@
 import os
 import json
 import logging
+import sqlite3
 from dotenv import load_dotenv
 from googleapiclient.discovery import build
 from pytube import YouTube
 from telegram.ext import Application, MessageHandler, filters, CommandHandler, ConversationHandler
 from telegram import ReplyKeyboardMarkup
 
+con = sqlite3.connect("db.sqlite3")
+cur = con.cursor()
+
 language = "en"
-commands = {
+COMMANDS = {
     "ru":
         {
             "start": "Привет {0}! Я Youtube Helper.\nДля получения дополнительной информации используйте команду /help",
             "help": open("help_commands_ru.txt", "r").read(),
-            "findchannel": "Введите название канала",
-            "findvideo": "Введите название видео"
+            "findchannel": ["Введите название канала", "Такого канал не существует"],
+            "findvideo": ["Введите название видео", "Такого видео не существует"],
+            "downloadvideo": ["Отправьте мне ссылку на видео", "Извините, я не могу скачать это видео, оно слишком длинное"],
+            "language": "Успешно!"
         },
     "en":
         {
             "start": "Hello {0}! I'm YouTube Helper.\nFor more information, use the /help command",
             "help": open("help_commands_en.txt", "r").read(),
-            "findchannel": "Enter channel name",
-            "findvideo": "Enter video name"
+            "findchannel": ["Enter channel name", "There is no such channel"],
+            "findvideo": ["Enter video name", "There is no such video"],
+            "downloadvideo": ["Send me the link to the video", "Sorry, I can't download this video, it's too long"],
+            "language": "Successful!"
         }
 }
 
@@ -36,18 +44,23 @@ logger = logging.getLogger(__name__)
 
 
 async def start(update, context):
-    user = update.effective_user
-    response = commands[language]["start"].format(user.mention_html())
-    await update.message.reply_html(response)
+    cur.execute(f"""INSERT INTO users(user_name) VALUES('{update.effective_user.first_name}')""")
+    con.commit()
+    await update.message.reply_html(COMMANDS[language]["start"].format(update.effective_user.mention_html()))
 
 
 async def help_command(update, context):
-    response = commands[language]["help"]
-    await update.message.reply_text(response)
+    await update.message.reply_text(COMMANDS[language]["help"])
+
+
+async def change_language_command(update, context):
+    global language
+    language = "en" if language == "ru" else "ru"
+    await update.message.reply_text(COMMANDS[language]["language"])
 
 
 async def search_channel_command(update, context):
-    await update.message.reply_text("Введите название канала")
+    await update.message.reply_text(COMMANDS[language]["findchannel"][0])
     return 1
 
 
@@ -84,12 +97,12 @@ async def search_channel(update, context):
             f"Дата регистрации: {registration_date}"
         )
     else:
-        await update.message.reply_text("Такого канал не существует")
+        await update.message.reply_text(COMMANDS[language]["findchannel"][1])
     return ConversationHandler.END
 
 
 async def search_video_command(update, context):
-    await update.message.reply_text("Введите название видео")
+    await update.message.reply_text(COMMANDS[language]["findvideo"][0])
     return 1
 
 
@@ -112,7 +125,6 @@ async def search_video(update, context):
             id=video_id
         )
         response = request.execute()
-        print(json.dumps(response, sort_keys=True, indent=4))
         title = response["items"][0]["snippet"]["title"]
         description = response["items"][0]["snippet"]["description"]
         duration = response["items"][0]["contentDetails"]["duration"]
@@ -131,28 +143,32 @@ async def search_video(update, context):
             f"Количество комментариев: {commentCount}\n"
         )
     else:
-        await update.message.reply_text("Такого видео не существует")
+        await update.message.reply_text(COMMANDS[language]["findvideo"][1])
     return ConversationHandler.END
 
 
 async def download_video_command(update, context):
-    await update.message.reply_text("Отправьте мне ссылку на видео")
+    await update.message.reply_text(COMMANDS[language]["downloadvideo"][0])
     return 1
 
 
 async def download_video(update, context):
     video_url = update.message.text
-    my_video = YouTube(video_url)
-    my_video.streams.first().download()
-    video = open('1.mp4', 'rb')
-    await context.bot.send_video(chat_id=21, video=video, timeout=10)
+    try:
+        my_video = YouTube(video_url)
+        s = my_video.streams.first().download()
+        video = open(s, 'rb')
+        await context.bot.send_video(chat_id=update.message.chat_id, video=video, supports_streaming=True, read_timeout=1000, connect_timeout=1000)
+    except TimeoutError:
+        await update.message.reply_text(COMMANDS[language]["downloadvideo"][1])
+    return ConversationHandler.END
 
 
 def main():
     application = Application.builder().token(BOT_TOKEN).build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_command))
-    # application.add_handler(CommandHandler("findchannel", search_channel_command))
+    application.add_handler(CommandHandler("changelanguage", change_language_command))
 
     search_channel_handler = ConversationHandler(
         entry_points=[CommandHandler("findchannel", search_channel_command)],
@@ -186,3 +202,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    cur.close()
