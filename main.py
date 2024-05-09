@@ -2,15 +2,18 @@ import os
 import json
 import logging
 import sqlite3
+import math
+import time
+import requests
 from dotenv import load_dotenv
 from googleapiclient.discovery import build
 from pytube import YouTube
-from telegram.ext import Application, MessageHandler, filters, CommandHandler, ConversationHandler
+from telegram.ext import Application, ApplicationBuilder, MessageHandler, filters, CommandHandler, ConversationHandler
 from telegram import ReplyKeyboardMarkup
+from moviepy.editor import VideoFileClip, AudioFileClip
 
 con = sqlite3.connect("db.sqlite3")
 cur = con.cursor()
-
 language = "en"
 COMMANDS = {
     "ru":
@@ -19,7 +22,8 @@ COMMANDS = {
             "help": open("help_commands_ru.txt", "r").read(),
             "findchannel": ["Введите название канала", "Такого канал не существует"],
             "findvideo": ["Введите название видео", "Такого видео не существует"],
-            "downloadvideo": ["Отправьте мне ссылку на видео", "Извините, я не могу скачать это видео, оно слишком длинное"],
+            "downloadvideo": ["Отправьте мне ссылку на видео",
+                              "Извините, я не могу скачать это видео, оно слишком длинное"],
             "language": "Успешно!"
         },
     "en":
@@ -41,6 +45,29 @@ youtube = build('youtube', 'v3', developerKey=API_KEY)
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+
+
+def split_video(size, filename):
+    video_file = VideoFileClip(filename, audio=True)
+    duration = video_file.duration
+    k = duration / size
+    part_duration = k * 40000000
+    dur1 = 0
+    dur2 = part_duration
+    durations = []
+    e = 1
+    number_of_videos = math.ceil(duration / part_duration)
+    for i in range(number_of_videos):
+        clip = video_file.subclip(dur1, dur2)
+        clip.write_videofile(f"output{e}.mp4", audio_codec="aac")
+        durations.append(dur2 - dur1)
+        e += 1
+        dur1 += part_duration
+        if duration < part_duration * e:
+            dur2 = duration
+        else:
+            dur2 += part_duration
+    return [[open(f"output{i + 1}.mp4", "rb").read(), durations[i]] for i in range(number_of_videos)]
 
 
 async def start(update, context):
@@ -128,10 +155,13 @@ async def search_video(update, context):
         title = response["items"][0]["snippet"]["title"]
         description = response["items"][0]["snippet"]["description"]
         duration = response["items"][0]["contentDetails"]["duration"]
-        commentCount = response["items"][0]["statistics"]["commentCount"]
+        commentCount = response["items"][0]["statistics"].get("commentCount")
+        if not commentCount:
+            commentCount = 0
         likeCount = response["items"][0]["statistics"]["likeCount"]
         viewCount = response["items"][0]["statistics"]["viewCount"]
-        viewCount = ''.join(["." + value if key % 3 == 0 and key != 0 else value for key, value in enumerate(viewCount[::-1])])[::-1]
+        viewCount = ''.join(
+            ["." + value if key % 3 == 0 and key != 0 else value for key, value in enumerate(viewCount[::-1])])[::-1]
         publication_date = response["items"][0]["snippet"]["publishedAt"]
         await update.message.reply_text(
             f"Название видео: {title}\n\n"
@@ -156,16 +186,35 @@ async def download_video(update, context):
     video_url = update.message.text
     try:
         my_video = YouTube(video_url)
-        s = my_video.streams.first().download()
-        video = open(s, 'rb')
-        await context.bot.send_video(chat_id=update.message.chat_id, video=video, supports_streaming=True, read_timeout=1000, connect_timeout=1000)
-    except TimeoutError:
+        url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendVideo"
+        video_path = my_video.streams.first().download()
+        if os.path.getsize(video_path) > 50 * 1024 * 1024:
+            video_files = split_video(os.path.getsize(video_path), video_path)
+        else:
+            video_files = [open(video_path, "rb").read(), VideoFileClip("output1.mp4").duration]
+        size = VideoFileClip("output1.mp4").w, VideoFileClip("output1.mp4").h
+        total_file_parts = len(video_files)
+
+        for part_num, file_part in enumerate(video_files, start=1):
+            files = {"video": ("file.mp4", file_part[0])}
+            params = {
+                "chat_id": update.message.chat_id,
+                "duration": file_part[1],
+                "width": size[0],
+                "height": size[1],
+                "supports_streaming": True,
+                "part": part_num,
+                "total": total_file_parts,
+            }
+            response = requests.post(url, params=params, files=files)
+    except Exception as err:
+        print(err)
         await update.message.reply_text(COMMANDS[language]["downloadvideo"][1])
     return ConversationHandler.END
 
 
 def main():
-    application = Application.builder().token(BOT_TOKEN).build()
+    application = ApplicationBuilder().token(BOT_TOKEN).build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_command))
     application.add_handler(CommandHandler("changelanguage", change_language_command))

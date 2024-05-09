@@ -5,14 +5,6 @@ from googleapiclient.discovery import build
 from pytube import YouTube
 
 
-def video_downloader(video_url):
-    my_video = YouTube(video_url, use_oauth=False, allow_oauth_cache=True)
-    my_video.streams.get_highest_resolution().download()
-    return my_video.title
-
-
-video_downloader("https://www.youtube.com/watch?v=h_o3ZGZ3jL8&t=36s")
-
 load_dotenv()
 
 API_KEY = os.getenv('API_KEY')
@@ -43,15 +35,15 @@ youtube = build('youtube', 'v3', developerKey=API_KEY)
 
 pl_request = youtube.search().list(
     part="id",
-    q="223 hours in 1 video",
+    q="Синий трактор",
     maxResults=5
 )
 pl_response = pl_request.execute()
 video_id = None
-# for item in pl_response["items"]:
-#     if item["id"]["kind"] == "youtube#video":
-#         video_id = item["id"]["videoId"]
-#         break
+for item in pl_response["items"]:
+    if item["id"]["kind"] == "youtube#video":
+        video_id = item["id"]["videoId"]
+        break
 if video_id:
     request = youtube.videos().list(
         part="snippet,statistics,contentDetails",
@@ -63,23 +55,26 @@ if video_id:
     title = response["items"][0]["snippet"]["title"]
     description = response["items"][0]["snippet"]["description"]
     duration = response["items"][0]["contentDetails"]["duration"]
-    commentCount = response["items"][0]["statistics"]["commentCount"]
+    commentCount = response["items"][0]["statistics"].get("commentCount")
+    if not commentCount:
+        commentCount = 0
     likeCount = response["items"][0]["statistics"]["likeCount"]
     viewCount = response["items"][0]["statistics"]["viewCount"]
     publication_date = response["items"][0]["snippet"]["publishedAt"]
-
-    print(duration)
-    duration = duration[::-1]
-    s = {}
-    e = None
-    for i in range(len(duration)):
-        if duration[i] in "1234567890":
-            s[e] += duration[i]
-        elif e:
-            s[e] = s[e][::-1]
-            s[duration[i]] = ""
-            e = duration[i]
-        else:
-            s[duration[i]] = ""
-            e = duration[i]
-    print(s)
+    print(commentCount)
+    #
+    # print(duration)
+    # duration = duration[::-1]
+    # s = {}
+    # e = None
+    # for i in range(len(duration)):
+    #     if duration[i] in "1234567890":
+    #         s[e] += duration[i]
+    #     elif e:
+    #         s[e] = s[e][::-1]
+    #         s[duration[i]] = ""
+    #         e = duration[i]
+    #     else:
+    #         s[duration[i]] = ""
+    #         e = duration[i]
+    # print(s)
