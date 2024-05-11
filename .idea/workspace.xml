@@ -4,13 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ec5cdb6b-b4bc-46a3-812e-ba88c8d19d33" name="Changes" comment="Added presentation.">
+    <list default="true" id="ec5cdb6b-b4bc-46a3-812e-ba88c8d19d33" name="Changes" comment="Fixed and improved problems with downloading videos. Fixed problem with hidden comments in YouTube videos. Added test.py">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/youtube_tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/youtube_tests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Защита проекта.pptx" beforeDir="false" afterPath="$PROJECT_DIR$/Защита проекта.pptx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,17 +48,17 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.main.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.test.executor&quot;: &quot;Run&quot;,
-    &quot;Python.youtube_tests.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/petrlutkin/Desktop/Yandex_lyceum/Telegram_bot_project&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.main.executor": "Run",
+    "Python.test.executor": "Run",
+    "Python.youtube_tests.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "/Users/petrlutkin/Desktop/Yandex_lyceum/Telegram_bot_project"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -69,7 +67,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.test">
+  <component name="RunManager" selected="Python.main">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="Telegram_bot_project" />
       <option name="ENV_FILES" value="" />
@@ -232,7 +230,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714822409407</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Fixed and improved problems with downloading videos. Fixed problem with hidden comments in YouTube videos. Added test.py">
+      <option name="closed" value="true" />
+      <created>1715294715925</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1715294715925</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -256,6 +262,7 @@
     <MESSAGE value="Added search_video_handler and download_video_handler. Deleted googletrans libary and installed pytube library." />
     <MESSAGE value="Small changes and bug fixes." />
     <MESSAGE value="Added presentation." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added presentation." />
+    <MESSAGE value="Fixed and improved problems with downloading videos. Fixed problem with hidden comments in YouTube videos. Added test.py" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed and improved problems with downloading videos. Fixed problem with hidden comments in YouTube videos. Added test.py" />
   </component>
 </project>

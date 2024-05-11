@@ -3,7 +3,6 @@ import json
 import logging
 import sqlite3
 import math
-import time
 import requests
 from dotenv import load_dotenv
 from googleapiclient.discovery import build
@@ -14,25 +13,25 @@ from moviepy.editor import VideoFileClip, AudioFileClip
 
 con = sqlite3.connect("db.sqlite3")
 cur = con.cursor()
-language = "en"
 COMMANDS = {
     "ru":
         {
             "start": "Привет {0}! Я Youtube Helper.\nДля получения дополнительной информации используйте команду /help",
             "help": open("help_commands_ru.txt", "r").read(),
-            "findchannel": ["Введите название канала", "Такого канал не существует"],
-            "findvideo": ["Введите название видео", "Такого видео не существует"],
-            "downloadvideo": ["Отправьте мне ссылку на видео",
-                              "Извините, я не могу скачать это видео, оно слишком длинное"],
+            "findchannel": {"ask_name": "Введите название канала", "error": "Такого канал не существует"},
+            "findvideo": {"ask_name": "Введите название видео", "error": "Такого видео не существует"},
+            "downloadvideo": {"ask_link": "Отправьте мне ссылку на видео",
+                              "error": "Что-то пошло не так. Попробуйте ещё раз позже."},
             "language": "Успешно!"
         },
     "en":
         {
             "start": "Hello {0}! I'm YouTube Helper.\nFor more information, use the /help command",
             "help": open("help_commands_en.txt", "r").read(),
-            "findchannel": ["Enter channel name", "There is no such channel"],
-            "findvideo": ["Enter video name", "There is no such video"],
-            "downloadvideo": ["Send me the link to the video", "Sorry, I can't download this video, it's too long"],
+            "findchannel": {"ask_name": "Enter channel name", "error": "There is no such channel"},
+            "findvideo": {"ask_name": "Enter video name", "error": "There is no such video"},
+            "downloadvideo": {"ask_link": "Send me the link to the video",
+                              "error": "Something went wrong. Try again later."},
             "language": "Successful!"
         }
 }
@@ -47,11 +46,16 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 
+def get_user_language(user_name):
+    language = cur.execute(f"SELECT language FROM users WHERE user_name = '{user_name}'").fetchall()[0][0]
+    return language
+
+
 def split_video(size, filename):
     video_file = VideoFileClip(filename, audio=True)
     duration = video_file.duration
     k = duration / size
-    part_duration = k * 40000000
+    part_duration = k * 37500000
     dur1 = 0
     dur2 = part_duration
     durations = []
@@ -67,50 +71,56 @@ def split_video(size, filename):
             dur2 = duration
         else:
             dur2 += part_duration
+    os.remove(filename)
     return [[open(f"output{i + 1}.mp4", "rb").read(), durations[i]] for i in range(number_of_videos)]
 
 
 async def start(update, context):
-    cur.execute(f"""INSERT INTO users(user_name) VALUES('{update.effective_user.first_name}')""")
+    user_name = update.effective_user.first_name
+    user_names = list(map(lambda x: x[0], cur.execute("SELECT user_name FROM users").fetchall()))
+    if user_name not in user_names:
+        cur.execute(f"""INSERT INTO users(user_name, language) VALUES('{user_name}', 'en')""")
     con.commit()
-    await update.message.reply_html(COMMANDS[language]["start"].format(update.effective_user.mention_html()))
+    await update.message.reply_html(
+        COMMANDS[get_user_language(user_name)]["start"].format(update.effective_user.mention_html()))
 
 
 async def help_command(update, context):
-    await update.message.reply_text(COMMANDS[language]["help"])
+    user_name = update.effective_user.first_name
+    await update.message.reply_text(COMMANDS[get_user_language(user_name)]["help"])
 
 
 async def change_language_command(update, context):
-    global language
-    language = "en" if language == "ru" else "ru"
-    await update.message.reply_text(COMMANDS[language]["language"])
+    user_name = update.effective_user.first_name
+    language = get_user_language(user_name)
+    cur.execute(
+        f"""UPDATE users SET language = '{"en" if language == "ru" else "ru"}' WHERE user_name = '{user_name}'""")
+    await update.message.reply_text(COMMANDS[get_user_language(user_name)]["language"])
 
 
 async def search_channel_command(update, context):
-    await update.message.reply_text(COMMANDS[language]["findchannel"][0])
+    user_name = update.effective_user.first_name
+    await update.message.reply_text(COMMANDS[get_user_language(user_name)]["findchannel"]["ask_name"])
     return 1
 
 
 async def search_channel(update, context):
+    user_name = update.effective_user.first_name
     channel_name = update.message.text
-    pl_request = youtube.search().list(
-        part="id",
-        q=channel_name,
-        maxResults=10
-    )
-    pl_response = pl_request.execute()
-    channel_id = None
-    for item in pl_response["items"]:
-        if item["id"]["kind"] == "youtube#channel":
-            channel_id = item["id"]["channelId"]
-            break
-    if channel_id:
+    try:
+        pl_request = youtube.search().list(
+            part="id",
+            q=channel_name,
+            maxResults=50,
+            type="channel"
+        )
+        pl_response = pl_request.execute()
+        channel_id = pl_response["items"][0]["id"]["channelId"]
         request = youtube.channels().list(
             part="snippet,statistics,contentDetails",
             id=channel_id
         )
         response = request.execute()
-        # print(json.dumps(response, sort_keys=True, indent=4))
         title = response["items"][0]["snippet"]["title"]
         subscriberCount = response["items"][0]["statistics"]["subscriberCount"]
         videoCount = response["items"][0]["statistics"]["videoCount"]
@@ -123,30 +133,29 @@ async def search_channel(update, context):
             f"{viewCount} просмотров\n"
             f"Дата регистрации: {registration_date}"
         )
-    else:
-        await update.message.reply_text(COMMANDS[language]["findchannel"][1])
+    except Exception:
+        await update.message.reply_text(COMMANDS[get_user_language(user_name)]["findchannel"]["error"])
     return ConversationHandler.END
 
 
 async def search_video_command(update, context):
-    await update.message.reply_text(COMMANDS[language]["findvideo"][0])
+    user_name = update.effective_user.first_name
+    await update.message.reply_text(COMMANDS[get_user_language(user_name)]["findvideo"]["ask_name"])
     return 1
 
 
 async def search_video(update, context):
+    user_name = update.effective_user.first_name
     video_name = update.message.text
-    pl_request = youtube.search().list(
-        part="id",
-        q=video_name,
-        maxResults=5
-    )
-    pl_response = pl_request.execute()
-    video_id = None
-    for item in pl_response["items"]:
-        if item["id"]["kind"] == "youtube#video":
-            video_id = item["id"]["videoId"]
-            break
-    if video_id:
+    try:
+        pl_request = youtube.search().list(
+            part="id",
+            q=video_name,
+            maxResults=5,
+            type="video"
+        )
+        pl_response = pl_request.execute()
+        video_id = pl_response["items"][0]["id"]["videoId"]
         request = youtube.videos().list(
             part="snippet,statistics,contentDetails",
             id=video_id
@@ -172,44 +181,48 @@ async def search_video(update, context):
             f"Количество лайков: {likeCount}\n"
             f"Количество комментариев: {commentCount}\n"
         )
-    else:
-        await update.message.reply_text(COMMANDS[language]["findvideo"][1])
+    except Exception:
+        await update.message.reply_text(COMMANDS[get_user_language(user_name)]["findvideo"]["error"])
     return ConversationHandler.END
 
 
 async def download_video_command(update, context):
-    await update.message.reply_text(COMMANDS[language]["downloadvideo"][0])
+    user_name = update.effective_user.first_name
+    await update.message.reply_text(COMMANDS[get_user_language(user_name)]["downloadvideo"]["ask_link"])
     return 1
 
 
 async def download_video(update, context):
+    user_name = update.effective_user.first_name
     video_url = update.message.text
-    try:
-        my_video = YouTube(video_url)
-        url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendVideo"
-        video_path = my_video.streams.first().download()
-        if os.path.getsize(video_path) > 50 * 1024 * 1024:
-            video_files = split_video(os.path.getsize(video_path), video_path)
-        else:
-            video_files = [open(video_path, "rb").read(), VideoFileClip("output1.mp4").duration]
-        size = VideoFileClip("output1.mp4").w, VideoFileClip("output1.mp4").h
-        total_file_parts = len(video_files)
-
-        for part_num, file_part in enumerate(video_files, start=1):
-            files = {"video": ("file.mp4", file_part[0])}
-            params = {
-                "chat_id": update.message.chat_id,
-                "duration": file_part[1],
-                "width": size[0],
-                "height": size[1],
-                "supports_streaming": True,
-                "part": part_num,
-                "total": total_file_parts,
-            }
-            response = requests.post(url, params=params, files=files)
-    except Exception as err:
-        print(err)
-        await update.message.reply_text(COMMANDS[language]["downloadvideo"][1])
+    my_video = YouTube(video_url)
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendVideo"
+    video_path = my_video.streams.get_lowest_resolution().download()
+    if os.path.getsize(video_path) > 50 * 1024 * 1024:
+        video_files = split_video(os.path.getsize(video_path), video_path)
+        video_path = "output1.mp4"
+    else:
+        video_files = [[open(video_path, "rb").read(), VideoFileClip(video_path).duration]]
+    size = VideoFileClip(video_path).w, VideoFileClip(video_path).h
+    total_file_parts = len(video_files)
+    counter = 1
+    for part_num, file_part in enumerate(video_files, start=1):
+        files = {"video": ("file.mp4", file_part[0])}
+        params = {
+            "chat_id": update.message.chat_id,
+            "duration": file_part[1],
+            "width": size[0],
+            "height": size[1],
+            "supports_streaming": True,
+            "part": part_num,
+            "total": total_file_parts,
+        }
+        response = requests.post(url, params=params, files=files)
+        os.remove(f"output{counter}.mp4")
+        counter += 1
+        if not response.json()["ok"]:
+            await update.message.reply_text(COMMANDS[get_user_language(user_name)]["downloadvideo"]["error"])
+            break
     return ConversationHandler.END
 
 
