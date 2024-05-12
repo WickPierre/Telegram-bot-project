@@ -3,4 +3,3 @@ google-api-python-client==2.126.0
 python-telegram-bot==21.1.1
 pytube==15.0.0
 moviepy==1.0.3
-requests==2.31.0
